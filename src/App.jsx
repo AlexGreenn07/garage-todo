@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { TodoItem } from "./components/TodoItem";
 import { AddTodo } from "./components/AddTodo";
+import ToggleTheme from "./components/ToggleTheme";
+import { initialTheme } from "./helpers/initialTheme";
+import { toggleTheme } from "./helpers/toggleTheme";
 
 function App() {
   const initialTodos = [
@@ -11,67 +14,45 @@ function App() {
   const [todos, setTodos] = useState(initialTodos);
   const [theme, setTheme] = useState(initialTheme());
 
-  function initialTheme() {
-    const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-
-    if (savedTheme) {
-      return savedTheme;
-    } else if (prefersDark) {
-      return "dark";
-    } else {
-      const hours = new Date().getHours();
-      return hours < 6 || hours >= 21 ? "dark" : "light";
-    }
-  }
-
   const onDelete = (id) => {
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id != id));
+    setTodos((prevTodos) =>
+      prevTodos.filter((todo) => todo.id != id),
+    );
   };
   const onAdd = (text) => {
     const newTodo = {
       id: Date.now(),
       text,
+      complited: false,
+      deadline: new Date().toISOString(),
+      order: todos.length + 1,
     };
     setTodos([...todos, newTodo]);
-  };
-
-  const toggleTheme = () => {
-    setTheme((prevTheme) => {
-      const newTheme = prevTheme === "dark" ? "light" : "dark";
-      localStorage.setItem("theme", newTheme);
-      return newTheme;
-    });
   };
 
   return (
     <div
       data-theme={theme}
-      className="flex flex-col min-h-screen justify-center items-center bg-page-light dark:bg-page-dark p-6"
+      className="bg-page-light dark:bg-page-dark flex min-h-screen flex-col items-center justify-center p-6"
     >
-      <div className="mb-6">
-        <div className="flex items-center cursor-pointer">
-          <button onClick={toggleTheme} className="relative">
-            <div className="w-14 h-7 rounded-full shadow-inner transition-colors duration-300 bg-gray-300 dark:bg-btn-dark"></div>
-            <div className="absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 translate-x-0 dark:translate-x-7"></div>
-          </button>
-          <span className="ml-3 text-gray-700 dark:text-gray-300 font-medium">
-            {theme === "light" ? "Светлая" : "Темная"}
-          </span>
-        </div>
-      </div>
+      <ToggleTheme
+        toggleTheme={() => toggleTheme(setTheme)}
+        theme={theme}
+      ></ToggleTheme>
       <div className="mx-auto flex flex-col gap-3">
-        <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-white mb-8">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
+        <h1 className="mb-8 text-center text-4xl font-bold text-gray-800 dark:text-white">
+          <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
             My TODO App
           </span>
         </h1>
         <AddTodo onAdd={onAdd}></AddTodo>
         <div className="flex flex-col gap-3">
           {todos.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} onDelete={onDelete}></TodoItem>
+            <TodoItem
+              key={todo.id}
+              todo={todo}
+              onDelete={onDelete}
+            ></TodoItem>
           ))}
         </div>
       </div>

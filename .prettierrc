@@ -1,0 +1,7 @@
+{
+  "plugins": ["prettier-plugin-classnames", "prettier-plugin-tailwindcss"],
+  "printWidth": 60,
+  "classNameWidth": 40,
+  "jsxSingleAttributePerLine": true,
+  "bracketSameLine": false
+}
