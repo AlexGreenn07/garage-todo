@@ -6,28 +6,34 @@ import { initialTheme } from "./helpers/initialTheme";
 import { toggleTheme } from "./helpers/toggleTheme";
 
 function App() {
-  const initialTodos = [
-    { id: 1, text: "Изучить React" },
-    { id: 2, text: "Сделать TODO app" },
-    { id: 3, text: "Сделать деплой" },
-  ];
-  const [todos, setTodos] = useState(initialTodos);
+  const [todos, setTodos] = useState([]);
   const [theme, setTheme] = useState(initialTheme());
 
-  const onDelete = (id) => {
-    setTodos((prevTodos) =>
-      prevTodos.filter((todo) => todo.id != id),
-    );
-  };
-  const onAdd = (text) => {
+  const onAdd = (text, deadline) => {
     const newTodo = {
       id: Date.now(),
       text,
-      complited: false,
-      deadline: new Date().toISOString(),
+      completed: false,
+      createdAt: new Date().toISOString(),
+      deadline: deadline || null,
       order: todos.length + 1,
     };
     setTodos([...todos, newTodo]);
+  };
+
+  const toggleComplete = (id) => {
+    const todoToUpdate = todos.find((todo) => todo.id === id);
+    if (!todoToUpdate) return;
+    const updatedTodo = {
+      ...todoToUpdate,
+      completed: !todoToUpdate.completed,
+    };
+    const updatedTodos = todos.map((todo) => (todo.id === id ? updatedTodo : todo));
+    setTodos(updatedTodos);
+  };
+
+  const onDelete = (id) => {
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id != id));
   };
 
   return (
@@ -35,10 +41,7 @@ function App() {
       data-theme={theme}
       className="bg-page-light dark:bg-page-dark flex min-h-screen flex-col items-center justify-center p-6"
     >
-      <ToggleTheme
-        toggleTheme={() => toggleTheme(setTheme)}
-        theme={theme}
-      ></ToggleTheme>
+      <ToggleTheme toggleTheme={() => toggleTheme(setTheme)} theme={theme}></ToggleTheme>
       <div className="mx-auto flex flex-col gap-3">
         <h1 className="mb-8 text-center text-4xl font-bold text-gray-800 dark:text-white">
           <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
@@ -52,6 +55,7 @@ function App() {
               key={todo.id}
               todo={todo}
               onDelete={onDelete}
+              onToggleComplete={toggleComplete}
             ></TodoItem>
           ))}
         </div>
