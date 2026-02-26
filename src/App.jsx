@@ -1,27 +1,63 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TodoItem } from "./components/TodoItem";
 import { AddTodo } from "./components/AddTodo";
 import ToggleTheme from "./components/ToggleTheme";
 import { initialTheme } from "./helpers/initialTheme";
 import { toggleTheme } from "./helpers/toggleTheme";
 
+const LOCAL_STORAGE_KEY = "todos";
+const API_URL = "https://69a04c083188b0b1d538546d.mockapi.io/api/v1/todos";
 function App() {
   const [todos, setTodos] = useState([]);
   const [theme, setTheme] = useState(initialTheme());
 
-  const onAdd = (text, deadline) => {
+  useEffect(() => {
+    const loadInitialData = async () => {
+      const savedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || "[]");
+      setTodos(savedTodos);
+      try {
+        const response = await fetch(API_URL);
+        if (response.ok) {
+          const serverTodos = await response.json();
+          setTodos(serverTodos);
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(serverTodos));
+        }
+      } catch (error) {
+        console.error("Ошибка загрузки данных: ", error);
+      }
+    };
+    loadInitialData();
+  }, []);
+
+  const onAdd = async (text, deadline) => {
     const newTodo = {
-      id: Date.now(),
+      id: `temp_${Date.now()}`,
       text,
       completed: false,
       createdAt: new Date().toISOString(),
       deadline: deadline || null,
       order: todos.length + 1,
     };
-    setTodos([...todos, newTodo]);
+    const updatedTodos = [...todos, newTodo];
+    setTodos(updatedTodos);
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newTodo),
+      });
+      const createdTodo = await response.json();
+      const syncedTodos = updatedTodos.map((todo) => (todo.id === newTodo.id ? createdTodo : todo));
+      setTodos(syncedTodos);
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(syncedTodos));
+    } catch (error) {
+      console.error("Ошибка добавления", error);
+      setTodos(todos);
+    }
   };
 
-  const toggleComplete = (id) => {
+  const toggleComplete = async (id) => {
     const todoToUpdate = todos.find((todo) => todo.id === id);
     if (!todoToUpdate) return;
     const updatedTodo = {
@@ -30,10 +66,30 @@ function App() {
     };
     const updatedTodos = todos.map((todo) => (todo.id === id ? updatedTodo : todo));
     setTodos(updatedTodos);
+    try {
+      await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTodo),
+      });
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedTodos));
+    } catch (error) {
+      console.error("Ошибка обновления: ", error);
+      setTodos(todos);
+    }
   };
 
-  const onDelete = (id) => {
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id != id));
+  const onDelete = async (id) => {
+    const previosTodos = todos;
+    const updatedTodos = todos.filter((todo) => todo.id !== id);
+    setTodos(updatedTodos);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedTodos));
+    try {
+      await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    } catch (error) {
+      console.error("Ошибка удаления: ", error);
+      setTodos(previosTodos);
+    }
   };
 
   return (
