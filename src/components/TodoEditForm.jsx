@@ -1,3 +1,5 @@
+import SvgForm from "./SvgForm";
+
 const TodoEditForm = ({
   editText,
   setEditText,
@@ -29,22 +31,14 @@ const TodoEditForm = ({
         />
         <button
           onClick={handleSave}
-          className="flex cursor-pointer items-center justify-center gap-1 rounded border-2 border-green-500 bg-white px-2 py-1 text-sm text-green-600 transition-colors hover:bg-green-50 hover:text-green-800 sm:px-3 sm:py-1 sm:text-base"
+          className="flex cursor-pointer items-center justify-center gap-3 rounded border-2 border-green-500 bg-white px-2 py-1 text-sm text-green-600 transition-colors hover:bg-green-50 hover:text-green-800 sm:px-3 sm:py-1 sm:text-base"
         >
-          <svg
-            className="xs:w-5 xs:h-5 h-4 w-4"
-            stroke="currentColor"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M5 10l4 4 8-8"
-              strokeLinejoin="round"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-            />
-          </svg>
+          <SvgForm
+            classNameSVG={"xs:w-5 xs:h-5 h-4 w-4 stroke-2"}
+            dSVG={"M5 10l4 4 8-8"}
+            viewBoxSVG={"0 0 20 20"}
+          />
+
           <span className="sm:hidden">OK</span>
           <span className="hidden sm:inline">Готово</span>
         </button>

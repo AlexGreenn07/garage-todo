@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DeadlineBlock from "./DeadlineBlock";
+import SvgForm from "./SvgForm";
 
 export function AddTodo({ onAdd }) {
   const [text, setText] = useState("");
@@ -32,20 +33,11 @@ export function AddTodo({ onAdd }) {
           type="submit"
           className="hover:bg-btn-light-hv bg-btn-light dark:bg-btn-dark hover:dark:bg-btn-dark-hv cursor-pointer p-3 text-white transition-colors duration-300"
         >
-          <svg
-            className="h-6 w-6"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 4v16m8-8H4"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              strokeLinecap="round"
-            />
-          </svg>
+          <SvgForm
+            classNameSVG={"h-6 w-6 stroke-2"}
+            dSVG={"M12 4v16m8-8H4"}
+            viewBoxSVG={"0 0 24 24"}
+          />
         </button>
       </div>
       <DeadlineBlock
