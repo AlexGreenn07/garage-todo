@@ -1,12 +1,22 @@
 import React from "react";
 
-const DeleteConfirmModal = ({ onCancel, onConfirm, message }) => {
+const DeleteConfirmModal = ({
+  onCancel,
+  onConfirm,
+  message,
+  deletingId,
+  isDeletingCompleted,
+}) => {
+  const showModal = isDeletingCompleted || deletingId;
+  if (!showModal) return null;
   return (
     <div className="fixed inset-0">
       <div className="absolute inset-0 z-4 bg-black/50 backdrop-blur-xs"></div>
       <div className="relative z-5 flex h-full items-center justify-center p-4">
         <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 text-gray-800 shadow-xl dark:bg-gray-800 dark:text-white">
-          <h3 className="mb-4 text-xl font-bold">Подтверждение удаления</h3>
+          <h3 className="mb-4 text-xl font-bold">
+            Подтверждение удаления
+          </h3>
           <p className="mb-6">{message}</p>
           <div className="flex justify-end gap-3">
             <button

@@ -1,9 +1,11 @@
 import { useState } from "react";
+import DeadlineBlock from "./DeadlineBlock";
 
 export function AddTodo({ onAdd }) {
   const [text, setText] = useState("");
   const [deadline, setDeadline] = useState("");
-  const [showDeadlineInput, setShowDeadlineInput] = useState(false);
+  const [showDeadlineInput, setShowDeadlineInput] =
+    useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,42 +39,21 @@ export function AddTodo({ onAdd }) {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path d="M12 4v16m8-8H4" strokeLinejoin="round" strokeWidth={2} strokeLinecap="round" />
+            <path
+              d="M12 4v16m8-8H4"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              strokeLinecap="round"
+            />
           </svg>
         </button>
       </div>
-      {showDeadlineInput && (
-        <div className="mt-2 flex items-center gap-2 text-gray-500">
-          <input
-            type="datetime-local"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-            className="flex-1 rounded border border-blue-300 p-2"
-          />
-          <button
-            type="button"
-            onClick={() => {
-              setDeadline("");
-              setShowDeadlineInput(false);
-            }}
-            className="cursor-pointer p-2 hover:text-gray-700"
-          >
-            Отмена
-          </button>
-        </div>
-      )}
-
-      {!showDeadlineInput && (
-        <button
-          type="button"
-          onClick={() => {
-            setShowDeadlineInput(true);
-          }}
-          className="p-2 text-blue-500 hover:text-blue-700"
-        >
-          + Добавить дедлайн
-        </button>
-      )}
+      <DeadlineBlock
+        showDeadlineInput={showDeadlineInput}
+        deadline={deadline}
+        setDeadline={setDeadline}
+        setShowDeadlineInput={setShowDeadlineInput}
+      />
     </form>
   );
 }
