@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { TodoItem } from "./components/TodoItem";
 import ToggleTheme from "./components/ToggleTheme";
 import { initialTheme } from "./helpers/initialTheme";
 import { toggleTheme } from "./helpers/toggleTheme";
@@ -16,6 +15,7 @@ function App() {
 
   const {
     todos,
+    setTodos,
     deletingId,
     setDeletingId,
     isDeletingCompleted,
@@ -27,6 +27,7 @@ function App() {
     handleDeleteCompleted,
     confirmDeleteCompleted,
     hasCompletedTodos,
+    onReorder,
   } = useTodoManagement();
 
   return (
@@ -41,9 +42,11 @@ function App() {
       <MainContent
         onAdd={onAdd}
         todos={todos}
+        setTodos={setTodos}
         handleUpdate={handleUpdate}
         toggleComplete={toggleComplete}
         setDeletingId={setDeletingId}
+        onReorder={onReorder}
       />
       <DeleteConfirmModal
         deletingId={deletingId}

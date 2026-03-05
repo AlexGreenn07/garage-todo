@@ -11,3 +11,9 @@
   --color-page-dark: #323232;
   --color-page-light: #f3f3f3;
 }
+
+@layer components {
+  .item-dragging {
+    @apply z-50 scale-[1.02] border-blue-500 bg-slate-50 shadow-2xl;
+  }
+}

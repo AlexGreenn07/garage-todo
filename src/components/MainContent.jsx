@@ -7,9 +7,11 @@ import { useState } from "react";
 const MainContent = ({
   onAdd,
   todos,
+  setTodos,
   handleUpdate,
   toggleComplete,
   setDeletingId,
+  onReorder = { onReorder },
 }) => {
   const [filter, setFilter] = useState("all");
   const filteredTodos = todos.filter((todo) => {
@@ -25,9 +27,11 @@ const MainContent = ({
       <TodoFilter filter={filter} setFilter={setFilter} />
       <TodoList
         todos={filteredTodos}
+        setTodos={setTodos}
         handleUpdate={handleUpdate}
         toggleComplete={toggleComplete}
         setDeletingId={setDeletingId}
+        onReorder={onReorder}
       />
     </div>
   );
