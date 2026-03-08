@@ -1,25 +1,13 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import CheckboxButton from "./CheckboxButton";
 import TodoEditForm from "./TodoEditForm";
 import TodoTextDisplay from "./TodoTextDisplay";
 import DeleteButton from "./DeleteButton";
 import { useSortable } from "@dnd-kit/sortable";
-export const TodoItem = ({
-  todo,
-  onDelete,
-  onToggleComplete,
-  onUpdate,
-}) => {
+export const TodoItem = ({ todo, onDelete, onToggleComplete, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(todo.text);
-  const [editDeadline, setEditDeadline] = useState(
-    todo.deadline || "",
-  );
+  const [editDeadline, setEditDeadline] = useState(todo.deadline || "");
   const editFormRef = useRef(null);
   const {
     setNodeRef,
@@ -50,24 +38,15 @@ export const TodoItem = ({
   }, [editText, editDeadline, todo.id, onUpdate]);
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (
-        editFormRef.current &&
-        !editFormRef.current.contains(e.target)
-      ) {
+      if (editFormRef.current && !editFormRef.current.contains(e.target)) {
         handleSave();
       }
     };
     if (isEditing) {
-      document.addEventListener(
-        "click",
-        handleClickOutside,
-      );
+      document.addEventListener("click", handleClickOutside);
     }
     return () => {
-      document.removeEventListener(
-        "click",
-        handleClickOutside,
-      );
+      document.removeEventListener("click", handleClickOutside);
     };
   }, [isEditing, handleSave]);
   return (
@@ -84,10 +63,7 @@ export const TodoItem = ({
         ⠿
       </div>
       <div className="flex flex-1 items-center gap-3">
-        <CheckboxButton
-          handleToggle={handleToggle}
-          todo={todo}
-        />
+        <CheckboxButton handleToggle={handleToggle} todo={todo} />
         {isEditing ? (
           <TodoEditForm
             editText={editText}
@@ -98,10 +74,7 @@ export const TodoItem = ({
             editFormRef={editFormRef}
           />
         ) : (
-          <TodoTextDisplay
-            todo={todo}
-            setIsEditing={setIsEditing}
-          />
+          <TodoTextDisplay todo={todo} setIsEditing={setIsEditing} />
         )}
       </div>
       <DeleteButton id={todo.id} onDelete={onDelete} />{" "}
