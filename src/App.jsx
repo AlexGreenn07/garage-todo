@@ -1,15 +1,13 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import ToggleTheme from "./components/ToggleTheme";
 import { initialTheme } from "./helpers/initialTheme";
 import { toggleTheme } from "./helpers/toggleTheme";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import { useTodoManagement } from "./hooks/useTodoManagement";
 import DeleteCompletedButton from "./components/DeleteCompletedButton";
-import MainContent from "./components/MainContent";
+import Loader from "./components/Loader";
 
-const LOCAL_STORAGE_KEY = "todos";
-const API_URL =
-  "https://69a04c083188b0b1d538546d.mockapi.io/api/v1/todos";
+const MainContent = lazy(() => import("./components/MainContent"));
 function App() {
   const [theme, setTheme] = useState(initialTheme());
 
@@ -39,15 +37,18 @@ function App() {
         toggleTheme={() => toggleTheme(setTheme)}
         theme={theme}
       ></ToggleTheme>
-      <MainContent
-        onAdd={onAdd}
-        todos={todos}
-        setTodos={setTodos}
-        handleUpdate={handleUpdate}
-        toggleComplete={toggleComplete}
-        setDeletingId={setDeletingId}
-        onReorder={onReorder}
-      />
+      <Suspense fallback={<Loader />}>
+        <MainContent
+          onAdd={onAdd}
+          todos={todos}
+          setTodos={setTodos}
+          handleUpdate={handleUpdate}
+          toggleComplete={toggleComplete}
+          setDeletingId={setDeletingId}
+          onReorder={onReorder}
+        />
+      </Suspense>
+
       <DeleteConfirmModal
         deletingId={deletingId}
         onConfirm={() => {
@@ -55,9 +56,7 @@ function App() {
           setDeletingId(null);
         }}
         onCancel={() => setDeletingId(null)}
-        message={
-          "Вы уверены, что хотите удалить эту задачу?"
-        }
+        message={"Вы уверены, что хотите удалить эту задачу?"}
       />
       {isDeletingCompleted && (
         <DeleteConfirmModal
